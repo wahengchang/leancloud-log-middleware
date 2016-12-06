@@ -1,0 +1,17 @@
+{
+  "name": "leancloud-log-middleware",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Peter Chang <wahengchang@gmail.com>",
+  "license": "ISC",
+  "dependencies": {
+    "leanengine": "^1.2.3"
+  },
+  "devDependencies": {
+    "node-mocks-http": "^1.5.4"
+  }
+}
