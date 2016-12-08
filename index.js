@@ -127,17 +127,17 @@ var Response = function(req, res, next) {
 
     res.json = function(_result) {
         var payload = defaultResponsePayload(_result, req, res, next);
-
+        var that = this;
         if (token) {
             AV.User.become(token).then(function(user) {
                 payload.userId_new = user ? user.id : '';
                 payload.username_new = user ? user.get('username') : '';
                 add(payload);
-                ORIGIN_JSON_FUNCTION.call(this, _result);
+                ORIGIN_JSON_FUNCTION.call(that, _result);
             });
         } else {
             add(payload);
-            ORIGIN_JSON_FUNCTION.call(this, _result);
+            ORIGIN_JSON_FUNCTION.call(that, _result);
         }
     };
     next();
