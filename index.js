@@ -5,6 +5,48 @@ var CLASS = process.env.LOG_SYSTEM_CLASS;
 
 
 
+var defaultResponsePayload = function(_result, req, res, next){
+  return {
+      protocol: req.protocol || '',
+      host: req.get('host') || '',
+      originalUrl: req.originalUrl || '',
+      body: req.body ? JSON.stringify(req.body) : '',
+      header: req.headers ? JSON.stringify(req.headers) : '',
+      version: req.headers ? req.headers.version : '',
+      platform: req.headers ? req.headers.platform : '',
+      platformVersion: req.headers ? req.headers.platformVersion : '',
+      brand: req.headers ? req.headers.brand : '',
+      device: req.headers ? req.headers.device : '',
+      xRealIp: req.headers ? req.headers['x-real-ip'] : '',
+      xForwardedFor: req.headers ? req.headers['x-forwarded-for'] : '',
+      userId: AV.User.current() ? AV.User.current().id : '',
+      username: AV.User.current() ? AV.User.current().get('username') : '',
+      response: JSON.stringify(_result) || '',
+      reqOrRes: 'Response'
+  }
+}
+
+
+var defaultRequestPayload = function(_result, req, res, next){
+  return {
+      protocol: req.protocol || '',
+      host: req.get('host') || '',
+      originalUrl: req.originalUrl || '',
+      body: req.body ? JSON.stringify(req.body) : '',
+      cookies: req.cookies ? JSON.stringify(req.cookies) : '',
+      header: req.headers ? JSON.stringify(req.headers) : '',
+      version: req.headers ? req.headers.version : '',
+      platform: req.headers ? req.headers.platform : '',
+      platformVersion: req.headers ? req.headers.platformVersion : '',
+      brand: req.headers ? req.headers.brand : '',
+      xRealIp: req.headers ? req.headers['x-real-ip'] : '',
+      xForwardedFor: req.headers ? req.headers['x-forwarded-for'] : '',
+      userId: AV.User.current() ? AV.User.current().id : '',
+      username: AV.User.current() ? AV.User.current().get('username') : '',
+      reqOrRes: 'Request',
+  }
+}
+
 var responseCB = function (err, res, body, cb) {
   if (err) {
     if (cb) cb(err, null);
@@ -64,115 +106,42 @@ var remove = function (_objectId, cb) {
 
 var Request = function (req, res, next) {
   var token = req.cookies.sessiontoken || req.headers.sessiontoken;
+  var payload = defaultRequestPayload(req, res, next);
   if (token) {
     AV.User.become(token).then(function (user) {
-      var payload = {
-        protocol: req.protocol || '',
-        host: req.get('host') || '',
-        originalUrl: req.originalUrl || '',
-        body: req.body ? JSON.stringify(req.body) : '',
-        cookies: req.cookies ? JSON.stringify(req.cookies) : '',
-        header: req.headers ? JSON.stringify(req.headers) : '',
-        version: req.headers ? req.headers.version : '',
-        platform: req.headers ? req.headers.platform : '',
-        platformVersion: req.headers ? req.headers.platformVersion : '',
-        brand: req.headers ? req.headers.brand : '',
-        xRealIp: req.headers ? req.headers['x-real-ip'] : '',
-        xForwardedFor: req.headers ? req.headers['x-forwarded-for'] : '',
-        userId: AV.User.current() ? AV.User.current().id : '',
-        username: AV.User.current() ? AV.User.current().get('username') : '',
-        reqOrRes: 'Request',
-        userId_new: user ? user.id : '',
-        username_new: user ? user.get('username') : '',
-      };
+        payload.userId_new = user ? user.id : '';
+        payload.username_new = user ? user.get('username') : '';
       add(payload);
       next();
     });
   } else {
-    var payload = {
-      protocol: req.protocol || '',
-      host: req.get('host') || '',
-      originalUrl: req.originalUrl || '',
-      body: req.body ? JSON.stringify(req.body) : '',
-      cookies: req.cookies ? JSON.stringify(req.cookies) : '',
-      header: req.headers ? JSON.stringify(req.headers) : '',
-      version: req.headers ? req.headers.version : '',
-      platform: req.headers ? req.headers.platform : '',
-      platformVersion: req.headers ? req.headers.platformVersion : '',
-      brand: req.headers ? req.headers.brand : '',
-      xRealIp: req.headers ? req.headers['x-real-ip'] : '',
-      xForwardedFor: req.headers ? req.headers['x-forwarded-for'] : '',
-      userId: AV.User.current() ? AV.User.current().id : '',
-      username: AV.User.current() ? AV.User.current().get('username') : '',
-      reqOrRes: 'Request'
-    };
     add(payload);
     next();
   }
 
 };
 
-var Response = function (req, res, next) {
-  var ORIGIN_JSON_FUNCTION = res.json;
-  var token = req.cookies.sessiontoken || req.headers.sessiontoken;
-  if (token) {
-    AV.User.become(token).then(function (user) {
-      res.json = function (_result) {
+var Response = function(req, res, next) {
+    var ORIGIN_JSON_FUNCTION = res.json;
+    var token = req.cookies.sessiontoken || req.headers.sessiontoken;
 
-        var payload = {
-          protocol: req.protocol || '',
-          host: req.get('host') || '',
-          originalUrl: req.originalUrl || '',
-          body: req.body ? JSON.stringify(req.body) : '',
-          header: req.headers ? JSON.stringify(req.headers) : '',
-          version: req.headers ? req.headers.version : '',
-          platform: req.headers ? req.headers.platform : '',
-          platformVersion: req.headers ? req.headers.platformVersion : '',
-          brand: req.headers ? req.headers.brand : '',
-          device: req.headers ? req.headers.device : '',
-          xRealIp: req.headers ? req.headers['x-real-ip'] : '',
-          xForwardedFor: req.headers ? req.headers['x-forwarded-for'] : '',
-          userId: AV.User.current() ? AV.User.current().id : '',
-          username: AV.User.current() ? AV.User.current().get('username') : '',
-          response: JSON.stringify(_result) || '',
-          reqOrRes: 'Response',
-          userId_new: user ? user.id : '',
-          username_new: user ? user.get('username') : '',
-        };
+    res.json = function(_result) {
+        var payload = defaultResponsePayload(_result, req, res, next);
 
-        add(payload);
-        ORIGIN_JSON_FUNCTION.call(this, _result);
-      };
-      next();
-    });
-
-  } else {
-    res.json = function (_result) {
-
-      var payload = {
-        protocol: req.protocol || '',
-        host: req.get('host') || '',
-        originalUrl: req.originalUrl || '',
-        body: req.body ? JSON.stringify(req.body) : '',
-        header: req.headers ? JSON.stringify(req.headers) : '',
-        version: req.headers ? req.headers.version : '',
-        platform: req.headers ? req.headers.platform : '',
-        platformVersion: req.headers ? req.headers.platformVersion : '',
-        brand: req.headers ? req.headers.brand : '',
-        device: req.headers ? req.headers.device : '',
-        xRealIp: req.headers ? req.headers['x-real-ip'] : '',
-        xForwardedFor: req.headers ? req.headers['x-forwarded-for'] : '',
-        userId: AV.User.current() ? AV.User.current().id : '',
-        username: AV.User.current() ? AV.User.current().get('username') : '',
-        response: JSON.stringify(_result) || '',
-        reqOrRes: 'Response'
-      };
-
-      add(payload);
-      ORIGIN_JSON_FUNCTION.call(this, _result);
+        if (token) {
+            AV.User.become(token).then(function(user) {
+                payload.userId_new = user ? user.id : '';
+                payload.username_new = user ? user.get('username') : '';
+                add(payload);
+                ORIGIN_JSON_FUNCTION.call(this, _result);
+            });
+        } else {
+            add(payload);
+            ORIGIN_JSON_FUNCTION.call(this, _result);
+        }
     };
     next();
-  }
+
 };
 
 
