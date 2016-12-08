@@ -3,6 +3,12 @@ var AV = require('leanengine');
 var BASE_URL = (process.env.isUS === 'true') ? 'https://us-api.leancloud.cn/1.1/classes' : 'https://api.leancloud.cn/1.1/classes';
 var CLASS = process.env.LOG_SYSTEM_CLASS;
 
+AV.init({
+  appId: process.env.LEANCLOUD_APP_ID,
+  appKey: process.env.LEANCLOUD_APP_KEY,
+  masterKey: process.env.LEANCLOUD_APP_MASTER_KEY,
+  region: 'us'
+});
 
 
 var defaultResponsePayload = function(_result, req, res, next){
