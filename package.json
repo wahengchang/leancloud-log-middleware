@@ -6,6 +6,15 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/wahengchang/leancloud-log-middleware.git"
+  },
+  "keywords": [
+    "leancloud",
+    "log",
+    "middleware"
+  ],
   "author": "Peter Chang <wahengchang@gmail.com>",
   "license": "ISC",
   "dependencies": {
