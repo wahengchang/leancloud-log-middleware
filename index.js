@@ -1,6 +1,6 @@
 var request = require('request');
 var AV = require('leanengine');
-var BASE_URL = (process.env.isUS === 'true') ? 'https://us-api.leancloud.cn/1.1/classes' : 'https://api.leancloud.cn/1.1/classes';
+var BASE_URL = (process.env.isUS === 'true') ? 'http://us-api.leancloud.cn/1.1/classes' : 'http://api.leancloud.cn/1.1/classes';
 var CLASS = process.env.LOG_SYSTEM_CLASS;
 
 AV.init({
