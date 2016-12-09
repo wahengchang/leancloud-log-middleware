@@ -12,6 +12,8 @@ $ npm install --save leancloud-log-middleware
 ```
 
 ## Initializing
+This package will initialize leancloud (AV.init) in npm module.
+(Or using AV func before AV.init will cause leancloud error.)
 
 ```js
 
