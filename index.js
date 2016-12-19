@@ -119,6 +119,8 @@ var Request = function (req, res, next) {
         payload.username_new = user ? user.get('username') : '';
       add(payload);
       next();
+    }, function(){
+      next();
     });
   } else {
     add(payload);
@@ -140,6 +142,9 @@ var Response = function(req, res, next) {
                 payload.username_new = user ? user.get('username') : '';
                 add(payload);
                 ORIGIN_JSON_FUNCTION.call(that, _result);
+            }, function(){
+              ORIGIN_JSON_FUNCTION.call(that, _result);
+              next();
             });
         } else {
             add(payload);
