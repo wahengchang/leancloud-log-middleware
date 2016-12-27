@@ -3,12 +3,20 @@ var AV = require('leanengine');
 var BASE_URL = (process.env.isUS === 'true') ? 'http://us-api.leancloud.cn/1.1/classes' : 'http://api.leancloud.cn/1.1/classes';
 var CLASS = process.env.LOG_SYSTEM_CLASS;
 
-AV.init({
-  appId: process.env.LEANCLOUD_APP_ID,
-  appKey: process.env.LEANCLOUD_APP_KEY,
-  masterKey: process.env.LEANCLOUD_APP_MASTER_KEY,
-  region: 'us'
-});
+if(process.env.isUS === 'true'){
+  AV.init({
+    appId: process.env.LEANCLOUD_APP_ID,
+    appKey: process.env.LEANCLOUD_APP_KEY,
+    masterKey: process.env.LEANCLOUD_APP_MASTER_KEY,
+    region: 'us'
+  });
+} else {
+  AV.init({
+    appId: process.env.LEANCLOUD_APP_ID,
+    appKey: process.env.LEANCLOUD_APP_KEY,
+    masterKey: process.env.LEANCLOUD_APP_MASTER_KEY
+  });
+}
 
 
 var defaultResponsePayload = function(_result, req, res, next){
