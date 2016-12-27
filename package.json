@@ -1,6 +1,6 @@
 {
   "name": "leancloud-log-middleware",
-  "version": "1.4.0",
+  "version": "1.4.1",
   "description": "Middleware of creating Leancloud object, by configuring LOG_SYSTEM_APP_ID, LOG_SYSTEM_APP_KEY and LOG_SYSTEM_CLASS",
   "main": "index.js",
   "scripts": {

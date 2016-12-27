@@ -21,6 +21,7 @@ This package will initialize leancloud (AV.init) in npm module.
 export LOG_SYSTEM_APP_ID=YOUR_LEANCLOUD_API_IP
 export LOG_SYSTEM_APP_KEY=YOUR_LEANCLOUD_API_KEY
 export LOG_SYSTEM_CLASS=YOUR_LEANCLOUD_CLASS
+export isUS=true
 
 $ npm start
 ```
