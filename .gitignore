@@ -4,7 +4,7 @@ logs
 npm-debug.log*
 
 Dockerfile
-setEnv.sh
+*.sh
 
 
 # Runtime data
