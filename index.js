@@ -60,7 +60,7 @@ var responseCB = function (err, res, body, cb) {
   } else if (!res) {
     if (cb) cb(null, 'Response error without res at log middleware.');
   } else {
-    if (res.statusCode === 200 || res.statusCode === 201) {
+    if (res.statusCode == 200 || res.statusCode == 201) {
       if (cb) cb(null, body);
     } else {
       if (cb) cb('Log middleware catch error statusCode is not 200 or 201.' + res.statusCode, null);
