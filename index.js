@@ -2,6 +2,7 @@ var request = require('request');
 var AV = require('leanengine');
 var BASE_URL = (process.env.isUS === 'true') ? 'http://us-api.leancloud.cn/1.1/classes' : 'http://api.leancloud.cn/1.1/classes';
 var CLASS = process.env.LOG_SYSTEM_CLASS;
+var SESSION_NAME = process.env.SESSION_NAME || 'sessiontoken';
 
 if(process.env.isUS === 'true'){
   AV.init({
@@ -68,22 +69,17 @@ var responseCB = function (err, res, body, cb) {
   } else if (!res) {
     if (cb) cb(null, 'Response error without res at log middleware.');
   } else {
-    if (res.statusCode == 200 || res.statusCode == 201) {
-      if (cb) cb(null, body);
-    } else {
-      if (cb) cb('Log middleware catch error statusCode is not 200 or 201.' + res.statusCode, null);
-      console.error('Log middleware catch error statusCode is not 200 or 201.' + res.statusCode);
-    }
+    if (cb) cb(null, body);
   }
 };
 
 var fetchSession = function(req) {  
   if(req.cookies){
-    if(req.cookies.sessiontoken) 
-      return req.cookies.sessiontoken;
+    if(req.cookies[SESSION_NAME]) 
+      return req.cookies[SESSION_NAME];
   } else if (req.headers){
-    if(req.headers.sessiontoken) 
-      return req.headers.sessiontoken;
+    if(req.headers[SESSION_NAME]) 
+      return req.headers[SESSION_NAME];
   } else {
     return null;
   }
@@ -130,13 +126,14 @@ var remove = function (_objectId, cb) {
   });
 }
 
-var Request = function (req, res, next) {
+var Request = function (req, res, next) {;
   var token = fetchSession(req);
   var payload = defaultRequestPayload(req, res, next);
+  payload.statusCode = res.statusCode;
   if (token) {
     AV.User.become(token).then(function (user) {
-        payload.userId_new = user ? user.id : '';
-        payload.username_new = user ? user.get('username') : '';
+      payload.userId_new = user ? user.id : '';
+      payload.username_new = user ? user.get('username') : '';
       add(payload);
       next();
     }, function(){
@@ -156,6 +153,7 @@ var Response = function(req, res, next) {
     res.json = function(_result) {
         var payload = defaultResponsePayload(_result, req, res, next);
         var that = this;
+        payload.statusCode = res.statusCode;
         if (token) {
             AV.User.become(token).then(function(user) {
                 payload.userId_new = user ? user.id : '';
